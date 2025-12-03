@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Banking Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    body {
+      background: #f3f4f6;
+      color: #111827;
+    }
+    /* NAVBAR */
+    header {
+      background: #111827;
+      color: #f9fafb;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    nav a {
+      color: #e5e7eb;
+      text-decoration: none;
+      margin-left: 16px;
+      font-size: 14px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* LAYOUT */
+    .container {
+      max-width: 1000px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1.5fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* CARDS */
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .small-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .balance-amount {
+      font-size: 26px;
+      font-weight: bold;
+      margin-top: 4px;
+      color: #16a34a;
+    }
+
+    /* FORMS */
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    input,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      outline: none;
+      font-size: 14px;
+    }
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > div {
+      flex: 1;
+    }
+
+    .btn {
+      margin-top: 12px;
+      padding: 8px 14px;
+      background: #2563eb;
+      color: #f9fafb;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn.secondary {
+      background: #6b7280;
+    }
+    .btn:hover {
+      opacity: 0.95;
+    }
+
+    /* TRANSACTION TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag.credit {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .tag.debit {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    /* LOGIN BANNER */
+    .login-banner {
+      text-align: center;
+      padding: 40px 16px;
+    }
+    .login-banner h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .login-banner p {
+      color: #4b5563;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header>
+    <div class="logo">MyBank</div>
+    <nav>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#transfer">Transfer</a>
+      <a href="#transactions">Transactions</a>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <!-- SIMPLE LOGIN -->
+    <div id="login-section" class="card">
+      <div class="login-banner">
+        <h1>Welcome to MyBank</h1>
+        <p>Login with your name and password to view your dashboard.</p>
+      </div>
+      <div class="row">
+        <div>
+          <label>Username (your name)</label>
+          <input id="username" type="text" placeholder="Enter your name" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input id="password" type="password" placeholder="1234" />
+        </div>
+      </div>
+      <button class="btn" onclick="login()">Login</button>
+      <p class="small-label" style="margin-top:8px;">
+        Hint: Password is <b>1234</b>. Username can be <b>any name</b>.
+      </p>
+    </div>
+
+    <!-- DASHBOARD + TRANSFER + TRANSACTIONS -->
+    <div id="app" style="display:none;">
+      <div class="grid">
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- ACCOUNT SUMMARY -->
+          <section id="dashboard" class="card">
+            <h2>Account Summary</h2>
+            <p class="small-label">Account Holder</p>
+            <p id="accountName">Demo User</p>
+
+            <p class="small-label" style="margin-top:10px;">Account Number</p>
+            <p id="accountNumber">1234 5678 9012</p>
+
+            <p class="small-label" style="margin-top:10px;">Current Balance</p>
+            <p class="balance-amount" id="balance">₹10,000.00</p>
+          </section>
+
+            <!-- QUICK ACTIONS: DEPOSIT / WITHDRAW -->
+          <section class="card">
+            <h2>Quick Actions</h2>
+            <div class="row">
+              <div>
+                <label>Amount (₹)</label>
+                <input id="quickAmount" type="number" min="1" placeholder="500" />
+              </div>
+            </div>
+            <button class="btn" onclick="deposit()">Deposit</button>
+            <button class="btn secondary" onclick="withdraw()">Withdraw</button>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+          <!-- TRANSFER MONEY -->
+          <section id="transfer" class="card">
+            <h2>Transfer Money</h2>
+            <label>Recipient Name</label>
+            <input id="recipientName" type="text" placeholder="Enter recipient name" />
+
+            <label>Recipient Account Number</label>
+            <input id="recipientAccount" type="text" placeholder="0000 0000 0000" />
+
+            <label>Transfer Amount (₹)</label>
+            <input id="transferAmount" type="number" min="1" placeholder="1000" />
+
+            <label>Transfer Type</label>
+            <select id="transferType">
+              <option value="NEFT">NEFT</option>
+              <option value="RTGS">RTGS</option>
+              <option value="IMPS">IMPS</option>
+            </select>
+
+            <button class="btn" onclick="makeTransfer()">Send Money</button>
+            <p id="transferMessage" class="small-label"></p>
+          </section>
+        </div>
+      </div>
+
+      <!-- TRANSACTION HISTORY -->
+      <section id="transactions" class="card">
+        <h2>Recent Transactions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Amount (₹)</th>
+              <th>Balance After</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody">
+            <!-- Filled by JavaScript -->
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    let currentBalance = 10000;
+    const transactions = [];
+
+    function formatCurrency(amount) {
+      return "₹" + amount.toFixed(2);
+    }
+
+    function updateBalanceUI() {
+      document.getElementById("balance").textContent = formatCurrency(currentBalance);
+    }
+
+    function addTransaction(description, type, amount) {
+      const now = new Date();
+      const row = {
+        datetime: now.toLocaleString(),
+        description,
+        type,
+        amount,
+        balanceAfter: currentBalance,
+      };
+      transactions.unshift(row); // latest first
+      renderTransactions();
+    }
+
+    function renderTransactions() {
+      const tbody = document.getElementById("transactionTableBody");
+      tbody.innerHTML = "";
+
+      if (transactions.length === 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td colspan="5" style="text-align:center; color:#6b7280;">No transactions yet.</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+
+      transactions.forEach((tx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${tx.datetime}</td>
+          <td>${tx.description}</td>
+          <td>
+            <span class="tag ${tx.type === "Credit" ? "credit" : "debit"}">
+              ${tx.type}
+            </span>
+          </td>
+          <td>${formatCurrency(tx.amount)}</td>
+          <td>${formatCurrency(tx.balanceAfter)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deposit() {
+      const amountInput = document.getElementById("quickAmount");
+      const amount = parseFloat(amountInput.value);
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid deposit amount.");
+        return;
+      }
+
+      currentBalance += amount;
+      updateBalanceUI();
+      addTransaction("Cash deposit", "Credit", amount);
+      amountInput.value = "";
+    }
+
+    function withdraw() {
+      const amountInput = document.getElementById("quickAmount");
+      const amount = parseFloat(amountInput.value);
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid withdrawal amount.");
+        return;
+      }
+      if (amount > currentBalance) {
+        alert("Insufficient balance.");
+        return;
+      }
+
+      currentBalance -= amount;
+      updateBalanceUI();
+      addTransaction("Cash withdrawal", "Debit", amount);
+      amountInput.value = "";
+    }
+
+    function makeTransfer() {
+      const name = document.getElementById("recipientName").value.trim();
+      const acc = document.getElementById("recipientAccount").value.trim();
+      const amount = parseFloat(document.getElementById("transferAmount").value);
+      const type = document.getElementById("transferType").value;
+      const msg = document.getElementById("transferMessage");
+
+      if (!name || !acc || isNaN(amount) || amount <= 0) {
+        msg.textContent = "Please fill all fields with valid values.";
+        msg.style.color = "red";
+        return;
+      }
+
+      if (amount > currentBalance) {
+        msg.textContent = "Insufficient balance for this transfer.";
+        msg.style.color = "red";
+        return;
+      }
+
+      currentBalance -= amount;
+      updateBalanceUI();
+      addTransaction(
+        `Transfer to ${name} (${type})`,
+        "Debit",
+        amount
+      );
+
+      msg.textContent = `₹${amount} sent to ${name} via ${type}.`;
+      msg.style.color = "green";
+
+      document.getElementById("recipientName").value = "";
+      document.getElementById("recipientAccount").value = "";
+      document.getElementById("transferAmount").value = "";
+    }
+
+    // ✅ LOGIN FUNCTION – sets account holder name from user input
+    function login() {
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
+      if (user === "" || pass === "") {
+        alert("Please enter username and password");
+        return;
+      }
+
+      // Password fixed: 1234, username can be anything
+      if (pass === "1234") {
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("app").style.display = "block";
+
+        // Set account holder name from login username
+        document.getElementById("accountName").textContent = user;
+
+        renderTransactions();
+      } else {
+        alert("Invalid password. Hint: 1234");
+      }
+    }
+  </script>
+</body>
+</html>
+
